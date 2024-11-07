@@ -24,7 +24,7 @@ export default function App() {
         command: "subscribe",
         identifier: JSON.stringify({
           id: uid,
-          channel: chatroom,
+          channel: "ChatChannel",
         }),
       }),
     );
@@ -35,7 +35,7 @@ export default function App() {
       command: "unsubscribe",
       identifier: JSON.stringify({
         id: uid,
-        channel: chatroom,
+        channel: "ChatChannel",
       }),
     });
   };

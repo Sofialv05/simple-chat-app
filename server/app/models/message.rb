@@ -6,10 +6,10 @@ class Message < ApplicationRecord
   private
 
   def broadcast_message
-  ActionCable.server.broadcast("chatroom_#{chatroom_id}", {
-    id: id,
-    body: body
-  })
-end
-
+    ActionCable.server.broadcast("ChatChannel", {
+                                    id:,
+                                    body: ,
+                                    chatroom_id:
+                                  })
+  end
 end
