@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChatBubble from "./components/ChatBubble";
 import Chatroom from "./components/Chatroom";
 import { CiSquarePlus } from "react-icons/ci";
@@ -13,6 +13,7 @@ export default function App() {
   const [chatroomId, setChatroomId] = useState();
   const [name, setName] = useState("");
   const [chatrooms, setChatrooms] = useState([]);
+  const messagesContainer = useRef(null);
 
   ws.onopen = () => {
     console.log("Connected to websocket server");
@@ -29,18 +30,45 @@ export default function App() {
     );
   };
 
-  // ws.onmessage = (e) => {
-  //   const data = JSON.parse(e.data);
-  //   if (data.type === "ping") return;
-  //   if (data.type === "welcome") return;
-  //   if (data.type === "confirm_subscription") return;
+  ws.onclose = () => {
+    JSON.stringify({
+      command: "unsubscribe",
+      identifier: JSON.stringify({
+        id: uid,
+        channel: chatroom,
+      }),
+    });
+  };
 
-  //   const newMessage = data.message;
-  // };
+  ws.onmessage = (e) => {
+    // console.log("Raw message data:", e.data);
+
+    const data = JSON.parse(e.data);
+
+    if (
+      data.type === "ping" ||
+      data.type === "welcome" ||
+      data.type === "confirm_subscription"
+    ) {
+      return;
+    }
+
+    console.log("Parsed message data:", data);
+    if (data.message) {
+      const newMessage = data.message;
+      setMessagesAndScrollDown([...messages, newMessage]);
+    } else {
+      console.warn("No message content in data:", data);
+    }
+  };
 
   useEffect(() => {
     fetchChatrooms();
   }, []);
+
+  useEffect(() => {
+    resetScroll();
+  }, [messages]);
 
   const fetchChatrooms = async () => {
     try {
@@ -59,7 +87,7 @@ export default function App() {
         `http://localhost:3000/chatroom/messages/${chatroomId}`,
       );
       const data = await response.json();
-      setMessages(data);
+      setMessagesAndScrollDown(data);
     } catch (err) {
       console.error(err);
     }
@@ -116,6 +144,34 @@ export default function App() {
     }
   };
 
+  // const handleSubmitMessage = (e) => {
+  //   e.preventDefault();
+  //   ws.send(
+  //     JSON.stringify({
+  //       command: "message",
+  //       identifier: JSON.stringify({
+  //         id: uid,
+  //         channel: chatroom,
+  //       }),
+  //       data: JSON.stringify({ message: message, chatroom_id: chatroomId }),
+  //     }),
+  //   );
+  //   setMessage("");
+  // };
+
+  const setMessagesAndScrollDown = (data) => {
+    console.log(data);
+    setMessages(data);
+    resetScroll();
+  };
+
+  const resetScroll = () => {
+    if (messagesContainer.current) {
+      messagesContainer.current.scrollTop =
+        messagesContainer.current.scrollHeight;
+    }
+  };
+
   return (
     <main className="h-screen p-20">
       <div className="h-full rounded-lg bg-slate-200 shadow-xl">
@@ -147,10 +203,10 @@ export default function App() {
                 </form>
               </div>
               <div className="flex-1 overflow-y-auto">
-                {chatrooms.map((chatroom, index) => {
+                {chatrooms.map((chatroom) => {
                   return (
                     <div
-                      key={index}
+                      key={chatroom.id}
                       onClick={() =>
                         handleChangeChatroom(chatroom.name, chatroom.id)
                       }
@@ -163,10 +219,14 @@ export default function App() {
             </div>
             <div className="flex flex-1 flex-col border-l-2 border-black">
               <div className="flex-1 overflow-y-auto p-4">
-                <div className="space-y-4">
-                  {messages.map((message, index) => {
+                <div
+                  ref={messagesContainer}
+                  className="messages space-y-4"
+                  id="messages"
+                >
+                  {messages.map((message) => {
                     return (
-                      <div key={index}>
+                      <div key={message.id}>
                         <ChatBubble message={message.body} />
                       </div>
                     );
