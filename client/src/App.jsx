@@ -124,26 +124,28 @@ export default function App() {
             </div>
           ) : (
             <div className="flex min-h-0 flex-1 gap-4 px-4 pb-4">
-              <aside className="w-1/4">
-                <form onSubmit={handleCreateChatroom} className="flex gap-1">
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Create chatroom"
-                    className="flex-1 border-b-2 border-slate-200 focus:outline-none"
-                  />
-                  <button
-                    type="submit"
-                    className="flex items-center justify-center gap-1 rounded-md bg-indigo-600 px-2 py-1 text-sm text-white"
-                  >
-                    Add{" "}
-                    <span className="text-md">
-                      <CiCirclePlus />
-                    </span>
-                  </button>
-                </form>
-                <div className="mt-2 overflow-y-auto">
+              <aside className="flex min-h-0 w-1/4 flex-col">
+                <div className="items-center justify-center p-1">
+                  <form onSubmit={handleCreateChatroom} className="flex gap-1">
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Create chatroom"
+                      className="flex-1 border-b-2 border-slate-200 focus:outline-none"
+                    />
+                    <button
+                      type="submit"
+                      className="flex items-center justify-center gap-1 rounded-md bg-indigo-600 px-2 py-1 text-sm text-white"
+                    >
+                      Add{" "}
+                      <span className="text-md">
+                        <CiCirclePlus />
+                      </span>
+                    </button>
+                  </form>
+                </div>
+                <div className="mt-2 flex-1 overflow-y-auto">
                   {chatrooms.map((chatroom) => (
                     <div
                       key={chatroom.id}
@@ -182,7 +184,7 @@ export default function App() {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder="Type a message"
-                      className="flex-1 rounded-md px-2 focus:outline-none"
+                      className="flex-1 rounded-lg px-2 focus:outline-none"
                     />
                     <button
                       type="submit"
