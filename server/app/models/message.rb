@@ -9,7 +9,8 @@ class Message < ApplicationRecord
     ActionCable.server.broadcast("ChatChannel", {
                                     id:,
                                     body: ,
-                                    chatroom_id:
+                                    chatroom_id:,
+                                    username:
                                   })
   end
 end
