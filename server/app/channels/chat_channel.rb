@@ -6,6 +6,6 @@ class ChatChannel < ApplicationCable::Channel
 
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
-    # stop_stream_from "MessageChannel"
+    stop_stream_from "ChatChannel"
   end
 end
