@@ -1,8 +1,7 @@
-// App.js
 import { useEffect, useRef, useState } from "react";
 import ChatBubble from "./components/ChatBubble";
 import Chatroom from "./components/Chatroom";
-import { CiCirclePlus, CiSquarePlus } from "react-icons/ci";
+import { CiCirclePlus } from "react-icons/ci";
 import useWebSocket from "./hooks/useWebsocket.js";
 
 import {
@@ -22,7 +21,10 @@ export default function App() {
   const [user, setUser] = useState("");
   const [username, setUsername] = useState("");
 
-  const uid = useWebSocket("ws://localhost:3000/cable", setMessages);
+  const uid = useWebSocket(
+    "wss://server-divine-fire-3387.fly.dev/cable",
+    setMessages,
+  );
 
   useEffect(() => {
     loadChatrooms();
@@ -91,7 +93,7 @@ export default function App() {
   };
 
   return (
-    <main className="font-Montserrat h-screen bg-slate-200 p-20">
+    <main className="h-screen bg-slate-200 p-20 font-Montserrat">
       <div className="h-full rounded-lg bg-white shadow-2xl">
         <div className="flex h-full flex-col">
           <header className="flex flex-col items-center justify-center py-4">
